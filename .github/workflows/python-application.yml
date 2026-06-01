@@ -7,11 +7,13 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
-    steps:
+    permissions:
+      contents: read
+      packages: write
 
+    steps:
       - name: Descargar codigo
         uses: actions/checkout@v4
 
@@ -34,9 +36,19 @@ jobs:
           python app.py
 
       - name: Simular despliegue
-        run: |
-          echo "Desplegando aplicacion..."
+        run: echo "Desplegando aplicacion..."
+
+      - name: Login en GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Construir imagen Docker
         run: |
-          docker build -t ejercicio:3.0.0 .
+          docker build -t ghcr.io/${{ github.repository_owner }}/ejercicio:3.0.0 .
+
+      - name: Publicar imagen Docker
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/ejercicio:3.0.0
