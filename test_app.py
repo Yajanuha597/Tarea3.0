@@ -1,4 +1,4 @@
-from app import saludo
+from app import sumar
 
-def test_saludo():
-    assert saludo() == "Hola Mundo desde CI/CD"
+def test_sumar():
+    assert sumar(5, 3) == 8
